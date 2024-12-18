@@ -1,12 +1,7 @@
-'use client'
-
 import React, { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Users, Vote, RefreshCw, LogIn } from 'lucide-react';
+import { Users, Vote, RefreshCw } from 'lucide-react';
 
-const PlanningPoker: React.FC = () => {
+const PlanningPoker = () => {
   const [playerName, setPlayerName] = useState('');
   const [sessionId, setSessionId] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -65,7 +60,7 @@ const PlanningPoker: React.FC = () => {
   const calculateAverage = () => {
     const numericVotes = players
       .map(player => player.vote)
-      .filter(vote => typeof vote === 'number');
+      .filter(vote => typeof vote === 'number' && !isNaN(vote));
     
     if (numericVotes.length === 0) return 0;
     return (numericVotes.reduce((a, b) => a + b, 0) / numericVotes.length).toFixed(1);
@@ -79,40 +74,41 @@ const PlanningPoker: React.FC = () => {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2">Your Name</label>
-            <Input
+            <input
+              type="text"
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
               placeholder="Enter your name"
-              className="w-full"
+              className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           
           <div>
             <label className="block text-sm font-medium mb-2">Session ID (Optional)</label>
-            <Input
+            <input
+              type="text"
               value={sessionId}
               onChange={(e) => setSessionId(e.target.value.toUpperCase())}
               placeholder="Enter session ID to join existing game"
-              className="w-full"
+              className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           
           <div className="flex gap-4">
-            <Button
+            <button
               onClick={handleCreateSession}
               disabled={!playerName}
-              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
+              className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Create New Session
-            </Button>
-            <Button
+            </button>
+            <button
               onClick={handleJoinSession}
               disabled={!playerName || !sessionId}
-              variant="outline"
-              className="flex-1"
+              className="flex-1 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Join Session
-            </Button>
+            </button>
           </div>
         </div>
       </div>
@@ -154,44 +150,44 @@ const PlanningPoker: React.FC = () => {
       {/* Players and Votes */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {players.map((player) => (
-          <Card key={player.id} className="bg-white">
-            <CardContent className="p-4 flex items-center justify-between">
-              <div className="font-medium">
-                {player.name}
-                {player.name === playerName && " (You)"}
-              </div>
-              <div className="flex items-center gap-2">
-                <Vote className="w-4 h-4" />
-                {revealed || player.name === playerName ? (
-                  <span className="font-bold">{player.vote || '-'}</span>
-                ) : player.vote ? (
-                  '🤔'
-                ) : (
-                  '-'
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          <div 
+            key={player.id}
+            className="bg-white rounded-lg border shadow-sm p-4 flex items-center justify-between"
+          >
+            <div className="font-medium">
+              {player.name}
+              {player.name === playerName && " (You)"}
+            </div>
+            <div className="flex items-center gap-2">
+              <Vote className="w-4 h-4" />
+              {revealed || player.name === playerName ? (
+                <span className="font-bold">{player.vote || '-'}</span>
+              ) : player.vote ? (
+                '🤔'
+              ) : (
+                '-'
+              )}
+            </div>
+          </div>
         ))}
       </div>
 
       {/* Actions */}
       <div className="flex justify-center gap-4">
-        <Button
+        <button
           onClick={() => setRevealed(true)}
           disabled={!players.every((player) => player.vote !== null)}
-          className="bg-blue-500 hover:bg-blue-600 text-white"
+          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Reveal Votes
-        </Button>
-        <Button
+        </button>
+        <button
           onClick={resetGame}
-          variant="outline"
-          className="border-gray-200"
+          className="border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-50 flex items-center gap-2"
         >
-          <RefreshCw className="w-4 h-4 mr-2" />
+          <RefreshCw className="w-4 h-4" />
           Reset
-        </Button>
+        </button>
       </div>
 
       {/* Results */}
